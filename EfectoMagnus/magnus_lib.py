@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from IPython.display import HTML
 
+𝜋 = np.pi
+
 def plotGrid(xm, ym, size, frame='grid'):
     Lx = xm[-1] - xm[0]
     Ly = ym[-1] - ym[0]
@@ -106,10 +108,10 @@ def cylinder_definition(𝛼):
     xd4, yd4 = 0.75 * np.cos(𝛼 - 𝜋/2), 0.75 * np.sin(𝛼 - 𝜋/2)
     return [(xd1, yd1), (xd2, yd2), (xd3, yd3), (xd4, yd4)]
 
-def stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, streamplot = False):
+def stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, kind):
     cc = cylinder_definition(𝛼)
 
-    if streamplot:
+    if kind == 'Streamplot':
         # Computes the velocity field on the mesh grid
         u_d1, v_d1 = get_velocity_doublet(𝜅, cc[0][0], cc[0][1], xg, yg)
         u_d2, v_d2 = get_velocity_doublet(𝜅, cc[1][0], cc[1][1], xg, yg)
@@ -122,8 +124,8 @@ def stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, streamplot = Fals
         u_v3, v_v3 = get_velocity_vortex(Γ, cc[2][0], cc[2][1], xg, yg)
         u_v4, v_v4 = get_velocity_vortex(Γ, cc[3][0], cc[3][1], xg, yg)
 
-        u_freestream = 𝑢_inf * np.ones((N, N), dtype=float)
-        v_freestream = np.zeros((N, N), dtype=float)
+        u_freestream = 𝑢_inf * np.ones(xg.shape, dtype=float)
+        v_freestream = np.zeros(xg.shape, dtype=float)
         # Superposition of the doublet on the freestream flow
         u1 = u_freestream + u_d1 + u_v1
         v1 = v_freestream + v_d1 + v_v1
@@ -149,8 +151,7 @@ def stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, streamplot = Fals
             
         return u_sum, v_sum
     
-    else:
-        
+    elif kind == 'Streamfunction':
         psi_freestream = 𝑢_inf * yg 
         # computes the stream-function on the mesh grid
         p1 = psi_freestream + get_stream_function_doublet(𝜅, cc[0][0], cc[0][1], xg, yg)
@@ -175,21 +176,22 @@ def stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, streamplot = Fals
         return s_f
     
 
-def mi_animacion(i, 𝜅, Γ, num_cil, xg, yg, streamplot=False):
+def mi_animacion(i, 𝜅, Γ, num_cil, x, y, kind):
     𝛼 = 𝜋 * 8 * i / 90
     𝑢_inf = 0.6      # Velocidad del flujo libre
 
     cc = cylinder_definition(𝛼)
 
+    xg, yg = np.meshgrid(x, y)            # Malla del dominio
     size = 10
     # Initialization of figure
     ax = plotGrid(x, y, size,'topdown')
 
-    if streamplot:
-        u_f, v_f = stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, streamplot)
+    if kind == 'Streamplot':
+        u_f, v_f = stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, kind)
         ax.streamplot(xg, yg, u_f, v_f, density=1.0, linewidth=0.75, color='#2e86c1', arrowsize=0.75, minlength=0.8)
-    else:
-        s_f = stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, streamplot)
+    elif kind == 'Streamfunction':
+        s_f = stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, kind)
         ax.contour(xg, yg, s_f, levels=100, colors='#9b59b6', 
                    linewidths=0.75, linestyles='solid')
 
@@ -218,9 +220,7 @@ def mi_animacion(i, 𝜅, Γ, num_cil, xg, yg, streamplot=False):
 if __name__ == '__main__':
 
     𝜅 = 0.25         # fuerza del of the doublet
-    𝜋 = np.pi
     𝛼 = 0
-    
     Γ = 4.0
     # Dimensiones del dominio
     x_start, x_end = -2.0, 2.0  
@@ -229,9 +229,8 @@ if __name__ == '__main__':
     N = 200                               # Número de puntos discretos
     x = np.linspace(x_start, x_end, N)    # Arreglo 1D en x
     y = np.linspace(y_start, y_end, N)    # Arreglo 1D en y
-    xg, yg = np.meshgrid(x, y)            # Malla del dominio
 
     num_cil = 1
-    mi_animacion(0, 𝜅, Γ, num_cil, xg, yg, streamplot=False)
+    mi_animacion(0, 𝜅, Γ, num_cil, x, y, kind='Streamfunction')
 
     plt.show()
