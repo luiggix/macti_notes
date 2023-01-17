@@ -2,10 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from ipywidgets import interact
 import ipywidgets as widgets
-import seaborn as snb; snb.set();
 
-def olvido(t,s):
-    return np.exp(-t/s)
+R = lambda t, S: np.exp(-t/S)
+
 
 def Ejemplo1(S,h,t):
     xs=np.linspace(0,10,100)
@@ -32,21 +31,20 @@ def Ejemplo1(S,h,t):
     
     ax1.plot(td,olvido(td,S),marker="o",color="black")
     
-    
-    
     ax2.plot(td,m,ls="--",marker="o")
     
-    ax1.set_title('Función del olvido: $R(t) = e^{-t/s}$ ' "\n" f'Para $S = {np.round(S,2)}$',fontsize=20)
-    ax1.set_xlabel("$t$ (días)",fontsize=18)
-    ax1.set_ylabel("$R$",fontsize=18)
+    S_text = '$S$ = {}'.format(S)
+    ax1.set_title('Función del olvido: $R(t) = e^{-t/s}$  ' + S_text, )
+    ax1.set_xlabel("$t$ (días)")
+    ax1.set_ylabel("$R$")
     ax1.set_ylim(-0.1,1.2)
-    ax1.set_xlim(-0.1,8)
+    ax1.set_xlim(-0.5,8)
     
-    ax2.set_title('Pendiente $m(t)$',fontsize=20)
-    ax2.set_xlabel("$t$ (días)",fontsize=18)
-    ax2.set_ylabel("m",fontsize=18)
+    ax2.set_title('Pendiente $m(t)$')
+    ax2.set_xlabel("$t$ (días)")
+    ax2.set_ylabel("m")
     ax2.set_ylim(-1,0.1)
-    ax2.set_xlim(-0.1,8)
+    ax2.set_xlim(-0.5,8)
     
     
     plt.show()
