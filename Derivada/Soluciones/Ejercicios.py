@@ -9,7 +9,7 @@ class Ejercicios:
     def Solucion(self):
         cadena=str("./Soluciones/sol0"+str(self.Num)+self.Let+".npy")
         S=np.load(cadena)
-        print(S)
+        print(S,type(S))
         if self.Let == "a":
             Actividad("F",S).Ejercicio()
         if self.Let == "b":
