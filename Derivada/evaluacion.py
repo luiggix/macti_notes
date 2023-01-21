@@ -27,7 +27,7 @@ class Evalua():
             assert_equal(list(x.flatten()), list(y.flatten()))
         except AssertionError as info:
             print(Fore.RESET + 80*'-')
-            print(Fore.RED + 'Cuidado: Ocurrió un error en tus cálculos: \n {}'.format(info))
+            print(Fore.RED + 'Cuidado: ocurrió un error en tus cálculos: \n {}'.format(info))
             print(Fore.RESET + 80*'-')
         else:
             print(Fore.GREEN + '¡Tu resultado es correcto!')
@@ -50,15 +50,16 @@ class EvaluaEjercicio():
             stream = pkg_resources.resource_stream('macti', filename)
         y = np.load(stream)
 
-        display(Latex(f'$f(x) = {f}$,\n $f\'(x) = ¿?$ '))
+#        display(Latex(f'$f(x) = {f}$,\n $f\'(x) = ¿?$ '))
+        display(Latex(f'${f}$'))
         respuesta = input("=")
         respuesta = respuesta.replace(" ","")
         correcta = respuesta in y
         if correcta:
-            print(Fore.GREEN + '¡Tu resultado es correcto!')
+            print(Fore.GREEN + '¡Tu respuesta es correcta!')
         else:
             print(Fore.RESET + 80*'-')
-            print(Fore.RED + '¡Tu respuesta es incorrecta!, verifica las reglas de la derivacion y vuelve a intentar')
+            print(Fore.RED + 'Cuidado: ocurrió un error en tus cálculos y/o tu respuesta.')
             print(Fore.RESET + 80*'-')            
             
 #----------------------- TEST OF THE MODULE ----------------------------------   
