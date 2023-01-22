@@ -1,11 +1,62 @@
+"""
+@author: Luis M. de la Cruz [Updated on mié 18 ene 2023 14:07:31 CST].
+"""
+
 # Herramientas para colorear texto y comparación de los resultados
 from colorama import Fore
 from nose.tools import assert_equal
 import numpy as np
+import pyarrow.parquet as pq
 import pkg_resources
 from IPython.display import display, Latex
 
+class Ejercicio():
 
+    def __init__(self, topic, local=False):
+        self.__topic = topic
+        self.local = local
+
+    def read(self, name, num):
+        if self.local:
+            stream = name
+        else:
+            filename = 'data/' + name
+            stream = pkg_resources.resource_stream('macti', filename) 
+           
+        return(pq.read_table(stream, columns=[num]).to_pandas())
+        
+    def responde(self, num, f = None):
+        table = self.read(self.__topic + '._ans' + '.parquet', num)
+        
+        if f:
+            text = display(Latex(f'${f}$ = '))
+        else:
+            text = "="
+        ans = input(text)
+        ans = ans.replace(" ","")
+        correcta = ans in table[num][0]
+
+        if correcta:
+            print(Fore.GREEN + '¡Tu respuesta es correcta!')
+        else:
+            print(Fore.RESET + 80*'-')
+            print(Fore.RED + 'Cuidado: ocurrió un error en tus cálculos y/o tu respuesta.')
+            print(Fore.RESET + 80*'-')  
+            
+    def verifica(self, num, x):
+        table = self.read(self.__topic + '._ans' + '.parquet', num)
+        
+        y = table[num][0]
+    
+        try:
+            assert_equal(list(x.flatten()), list(y.flatten()))
+        except AssertionError as info:
+            print(Fore.RESET + 80*'-')
+            print(Fore.RED + 'Cuidado: ocurrió un error en tus cálculos: \n {}'.format(info))
+            print(Fore.RESET + 80*'-')
+        else:
+            print(Fore.GREEN + '¡Tu resultado es correcto!')
+            
 class Evalua():
     def __init__(self, topic, local=False):
         self.topic = topic
@@ -31,39 +82,15 @@ class Evalua():
             print(Fore.RESET + 80*'-')
         else:
             print(Fore.GREEN + '¡Tu resultado es correcto!')
-
-            
-class EvaluaEjercicio():
-    def __init__(self, topic, local=False):
-        self.topic = topic
-        self.local = local 
-
-    def ejercicio(self, f, i):
-        """
-        Permite comparar el contenido de x con el de y. Si se encuentra una diferencia entonces emite una alerta.
-        """
-
-        if self.local:
-            stream = self.topic + './sol{:02d}.npy'.format(i)
-        else:
-            filename = 'data/' + self.topic + '/sol{:02d}.npy'.format(i)
-            stream = pkg_resources.resource_stream('macti', filename)
-        y = np.load(stream)
-
-#        display(Latex(f'$f(x) = {f}$,\n $f\'(x) = ¿?$ '))
-        display(Latex(f'${f}$'))
-        respuesta = input("=")
-        respuesta = respuesta.replace(" ","")
-        correcta = respuesta in y
-        if correcta:
-            print(Fore.GREEN + '¡Tu respuesta es correcta!')
-        else:
-            print(Fore.RESET + 80*'-')
-            print(Fore.RED + 'Cuidado: ocurrió un error en tus cálculos y/o tu respuesta.')
-            print(Fore.RESET + 80*'-')            
+          
             
 #----------------------- TEST OF THE MODULE ----------------------------------   
 if __name__ == '__main__':
+    
+    e = Ejercicio('example', local=True)
+    e.respuesta('1a')
+    
+"""
     x = np.linspace(0,1500,10)
     PA = 0.10 * x + 200
     PB = 0.35 * x + 20
@@ -78,7 +105,7 @@ if __name__ == '__main__':
     e = EvaluaEjercicio('',local=True)
     e.ejercicio(1)
     
-"""
+
     print('\n Local data')
     f = Evalua('./data/SistemasLineales/', local=True)
     f.verifica(PA, 1)

@@ -1,3 +1,7 @@
+"""
+@author: Luis M. de la Cruz [Updated on mié 18 ene 2023 14:07:31 CST].
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
