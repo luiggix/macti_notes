@@ -6,7 +6,8 @@
 from colorama import Fore
 from nose.tools import assert_equal
 import numpy as np
-import pyarrow.parquet as pq
+import pandas as pd
+
 import pkg_resources
 from IPython.display import display, Latex
 
@@ -22,11 +23,11 @@ class Ejercicio():
         else:
             filename = 'data/' + name
             stream = pkg_resources.resource_stream('macti', filename) 
-           
-        return(pq.read_table(stream, columns=[num]).to_pandas())
+
+        return(pd.read_parquet(stream, columns=[num]))
         
     def responde(self, num, f = None):
-        table = self.read(self.__topic + '._ans' + '.parquet', num)
+        answers = self.read(self.__topic + '__ans' + '', num)
         
         if f:
             text = display(Latex(f'${f}$ = '))
@@ -34,7 +35,7 @@ class Ejercicio():
             text = "="
         ans = input(text)
         ans = ans.replace(" ","")
-        correcta = ans in table[num][0]
+        correcta = ans in answers[num][0]
 
         if correcta:
             print(Fore.GREEN + '¡Tu respuesta es correcta!')
@@ -44,10 +45,11 @@ class Ejercicio():
             print(Fore.RESET + 80*'-')  
             
     def verifica(self, num, x):
-        table = self.read(self.__topic + '._ans' + '.parquet', num)
+        value = self.read(self.__topic + '__ans' + '', num)
         
-        y = table[num][0]
-    
+        x = np.array(x)
+        y = value[num][0]
+
         try:
             assert_equal(list(x.flatten()), list(y.flatten()))
         except AssertionError as info:
