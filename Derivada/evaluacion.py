@@ -41,7 +41,7 @@ class Ejercicio():
             print(Fore.GREEN + '¡Tu respuesta es correcta!')
         else:
             print(Fore.RESET + 80*'-')
-            print(Fore.RED + 'Cuidado: ocurrió un error en tus cálculos y/o tu respuesta.')
+            print(Fore.RED + 'Cuidado: ocurrió un error en tus cálculos y/o en tu respuesta.')
             print(Fore.RESET + 80*'-')  
             
     def verifica(self, num, x):
