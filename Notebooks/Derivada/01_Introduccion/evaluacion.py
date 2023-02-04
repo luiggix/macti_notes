@@ -17,23 +17,34 @@ class Ejercicio():
     def __init__(self, topic, local=False):
         self.__topic = topic
         self.local = local
-
-    def read(self, name, num):
-        if self.local:
-            path = os.getcwd()
-            print(path)
-            filename = path + '/../.data/' + name
-            print(filename)
-            
+    
+    @property
+    def topic(self):
+        return self.__topic
+    
+    def read(self, num):
+        if self.local: 
+            pwd = os.getcwd()
+            pwd_list = pwd.split(sep='/')
+            path = ''
+            for i in pwd_list[1:]:
+                path += '/'
+                if i != self.__topic:
+                    path += i
+                else:
+                    break
+            path = pd.read_parquet(path + '.__p')['p'][0]            
+            filename = path + '/data/' + self.__topic + '/.__ans'
             stream = filename
+            
         else:
-            filename = '/data/' + name
+            filename = '/data/' + self.__topic + '/.__ans'
             stream = pkg_resources.resource_stream('macti', filename) 
 
         return(pd.read_parquet(stream, columns=[num]))
        
     def responde(self, num, f = None):
-        answers = self.read(self.__topic + '/__ans.parquet.gz', num)
+        answers = self.read(num)
                                 
         if f:
             text = display(Latex(f'${f}$ = '))
@@ -51,7 +62,7 @@ class Ejercicio():
             print(Fore.RESET + 80*'-')  
             
     def verifica(self, num, x):
-        value = self.read(self.__topic + '/__ans.parquet.gz', num)
+        value = self.read(num)
         
         x = np.array(x)
         y = value[num][0]
