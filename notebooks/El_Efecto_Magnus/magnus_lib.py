@@ -176,7 +176,7 @@ def stream_function(𝛼, 𝜅, 𝑢_inf, Γ, num_cil, xg, yg, kind):
         return s_f
     
 
-def mi_animacion(i, 𝜅, Γ, num_cil, x, y, kind):
+def mi_animacion(x, y, i=0, 𝜅=0.25, Γ=0.0, num_cil=1, kind='Streamfunction'):
     𝛼 = 𝜋 * 8 * i / 90
     𝑢_inf = 0.6      # Velocidad del flujo libre
 
@@ -231,6 +231,6 @@ if __name__ == '__main__':
     y = np.linspace(y_start, y_end, N)    # Arreglo 1D en y
 
     num_cil = 1
-    mi_animacion(0, 𝜅, Γ, num_cil, x, y, kind='Streamfunction')
+    mi_animacion(x, y, 0, 𝜅, Γ, num_cil,  kind='Streamfunction')
 
     plt.show()
