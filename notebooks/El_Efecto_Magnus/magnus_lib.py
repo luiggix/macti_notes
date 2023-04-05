@@ -183,7 +183,7 @@ def mi_animacion(x, y, i=0, 𝜅=0.25, Γ=0.0, num_cil=1, kind='Streamfunction')
     cc = cylinder_definition(𝛼)
 
     xg, yg = np.meshgrid(x, y)            # Malla del dominio
-    size = 10
+    size = 8
     # Initialization of figure
     ax = plotGrid(x, y, size,'topdown')
 
