@@ -4,7 +4,7 @@ import os
 os.chdir('../')
 puser = os.getcwd()
 
-topic  = input('Tópico (directorio) : ')
+topic  = input('Nombre del curso: ')
 topic  = '/' + topic
 name   = input('Directorio para datos (<enter> .data) : ')
 plocal = '/.data' if len(name)==0 else '/' + name
