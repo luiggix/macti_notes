@@ -1,9 +1,11 @@
 import os, shutil, pkg_resources
 
-paths = ['./Tema1/', 
-         './utils/data/',
-         './utils/src/',
-         './utils/fig/']
+c_name = input('\n Nombre del curso : ')
+
+paths = [c_name + '/Tema1/', 
+         c_name + '/utils/data/',
+         c_name + '/utils/src/',
+         c_name + '/utils/fig/']
 
 for p in paths:
     if not os.path.exists(p):
