@@ -7,10 +7,10 @@ paths = ['./Tema1/',
 
 for p in paths:
     if not os.path.exists(p):
-        print('Creando el directorio :{}'.format(p))
+        print('Creando el directorio : {}'.format(p))
         os.makedirs(p , exist_ok=True)
     else:
-        print('El directorio :{} ya existe'.format(p))
+        print('El directorio : {} ya existe'.format(p))
 
 for i in range(1,4):
     filename = '/data/Plantillas/plantilla0' + str(i) + '.ipynb'
