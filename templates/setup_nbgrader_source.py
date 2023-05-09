@@ -1,5 +1,8 @@
-import os, shutil, pkg_resources
+import os, sys, shutil, pkg_resources
 import pandas as pd
+
+home = os.environ['HOME'] + '/'
+path = os.getcwd() + '/'
 
 # Nombre del curso
 c_name = input('\n Nombre del curso : ')
@@ -10,6 +13,16 @@ topic_list = pd.read_csv('topics_nbgrader.csv')
 print('\n -- Inicializando el directorio para NBGRADER \n')
 
 c_name_nbg = c_name + '_NBG'
+print('---> Notebooks que se van a copiar al directorio {}\n'.format(c_name_nbg))
+print(topic_list.to_string(index=False))
+
+continuar = input('\n ¿Continuar? Si [S], No [N] ')
+print(continuar)
+
+if continuar in ['S','s']:
+    pass
+else:
+    sys.exit('Termina el proceso anticipandamente: {}'.format(continuar))
 
 nbgrader_qs = 'nbgrader quickstart ' + c_name_nbg
 
@@ -18,12 +31,12 @@ print(nbgrader_qs)
 # Inicializamos el curso para NBGRADER
 os.system(nbgrader_qs)
 
-print('\n -- Copiando información al directorio {}'.format(c_name_nbg))
+print('\n -- Copiando información al directorio {} '.format(c_name_nbg))
 
 # Copiamos las notebooks de ejercicios al directorio
 # correspondiente para NBGRADER
 for topic in topic_list:
-    p = c_name_nbg + '/source/' + topic
+    p = path + c_name_nbg + '/source/' + topic
     if not os.path.exists(p):
         print('\n ---> Creando el directorio : {}'.format(p))
         os.makedirs(p , exist_ok=True)
@@ -32,8 +45,8 @@ for topic in topic_list:
         
     for a in topic_list[topic]:
         if not isinstance(a, float):
-            src = c_name + '/' + topic + '/' + a + '.ipynb'
-            dst = c_name_nbg + '/' + 'source/' + topic        
+            src = path + c_name + '/' + topic + '/' + a + '.ipynb'
+            dst = path + c_name_nbg + '/' + 'source/' + topic        
             print('Copiando {} al directorio {}'.format(src, dst))
             shutil.copy2(src, dst)
 
@@ -42,13 +55,13 @@ for topic in topic_list:
 
 print('\n -- Modificando : c.CourseDirectory.root')
 
-with open(c_name_nbg + "/nbgrader_config.py","r") as f:
+with open(path + c_name_nbg + "/nbgrader_config.py","r") as f:
     all_file = f.readlines()
     
 old_text = "# c.CourseDirectory.root = ''"
-new_text = 'c.CourseDirectory.root = "' + os.getcwd() + '/' + c_name_nbg + '" \n' 
+new_text = 'c.CourseDirectory.root = "' + path + c_name_nbg + '" \n' 
 
-with open("nbgrader_config.py","w") as f:
+with open(home  + "/nbgrader_config.py","w") as f:
     for line in all_file:        
         if old_text in line:
             f.writelines(new_text)
