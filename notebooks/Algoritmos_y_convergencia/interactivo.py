@@ -42,7 +42,7 @@ def calc_exac_num(N,r):
     vis.show()
         
 w = widgets.interact(calc_exac_num,         
-             N = widgets.IntSlider(min=5, max=10, step=1, value=5),
+             N = widgets.IntSlider(min=3, max=10, step=1, value=5),
              r = widgets.IntSlider(min=3, max=10, step=1, value=3))
 
 display(w)
