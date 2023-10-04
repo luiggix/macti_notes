@@ -3,15 +3,15 @@ import matplotlib.pyplot as plt
 import macti.visual
 import time
 
-def grafCondInicial(ax, x,u):
+def plot_initial_status(ax, x, u):
     ax.plot(x,[0 for i in x], '-', c='gray', lw=5)#, label='Malla')
-    ax.plot(x,u,'-',c='orange', lw=2, label='Cond. inicial')
+    ax.plot(x,u,'r-',lw=2, label='Cond. inicial')
     ax.plot([0,0],[0,-1], 'k--', lw=1.0)
     ax.plot([1,1],[0,1], 'k--', lw=1.0)
-    ax.scatter([0,1],[u[0], u[-1]], fc='blue', ec='k', alpha=0.75, label='Cond. de frontera',zorder=5)
-    ax.grid(True)
+    ax.scatter([0,1],[u[0], u[-1]], fc='blue', ec='k', alpha=0.75, label='Cond. de frontera')
+    ax.grid()
     
-def grafResultados(fig, ax1, ax2, metodo,x,u,e,n,ht,suma_tiempos,error):
+def plot_results(fig, ax1, ax2, metodo,x,u,e,n,ht,suma_tiempos,error):
     # Gráficación de resultados
     titulo = metodo + ': Error = {:5.4e}, Pasos = {:4d}, CPU = {:5.4} [s]'.format(e, n, suma_tiempos)
     fig.suptitle(titulo, fontsize=12)
@@ -35,7 +35,7 @@ def grafResultados(fig, ax1, ax2, metodo,x,u,e,n,ht,suma_tiempos,error):
     plt.show()
 
     
-def grafMetodo(ax,metodo,x,u,e,n,ht,suma_tiempos,error):
+def plot_method(ax,metodo,x,u,e,n,ht,suma_tiempos,error):
     titulo = metodo + ': Error = {:5.4e}, Pasos = {:4d}, \n CPU = {:5.4} [s]'.format(e, n, suma_tiempos)
     ax.plot(x,u,'-k',lw=3,alpha=0.75,label='Sol. Final ($t=${:3.2f})'.format(n*ht))
     ax.set_xlabel('$x$')
@@ -70,7 +70,7 @@ def buildMatrix(N, r):
     
     return A
 
-def sol_FEuler(L,N,alpha,bA,bB,Nt,ht,tol,compara=False,ax=None):
+def FEuler(L,N,alpha,bA,bB,Nt,ht,tol,compara=False,ax=None):
     h = L / (N+1) # Tamaño de la malla
     r = ht * alpha / h**2 
     tolerancia = tol
@@ -92,7 +92,7 @@ def sol_FEuler(L,N,alpha,bA,bB,Nt,ht,tol,compara=False,ax=None):
     else:
         ax1 = ax
         
-    grafCondInicial(ax1, x,u)
+    plot_initial_status(ax1, x,u)
 
     # Ciclo en el tiempo, desde 1 hasta Nt-1
     for n in range(1, Nt):
@@ -120,11 +120,11 @@ def sol_FEuler(L,N,alpha,bA,bB,Nt,ht,tol,compara=False,ax=None):
             break
 
     if not compara:
-        grafResultados(fig, ax1, ax2, 'ForwardEuler',x,u,e,n,ht,suma_tiempos,error)
+        plot_results(fig, ax1, ax2, 'ForwardEuler',x,u,e,n,ht,suma_tiempos,error)
     else:
         return x,u,e,n,ht,suma_tiempos,error
 
-def sol_BEuler(L,N,alpha,bA,bB,Nt,ht,tol,compara=False,ax=None):
+def BEuler(L,N,alpha,bA,bB,Nt,ht,tol,compara=False,ax=None):
     h = L / (N+1) # Tamaño de la malla
     r = ht * alpha / h**2 
     tolerancia = tol
@@ -154,7 +154,7 @@ def sol_BEuler(L,N,alpha,bA,bB,Nt,ht,tol,compara=False,ax=None):
     else:
         ax1 = ax
     
-    grafCondInicial(ax1, x,u)
+    plot_initial_status(ax1, x,u)
 
     # Ciclo en el tiempo, desde 1 hasta Nt-1
     for n in range(1, Nt):
@@ -193,21 +193,21 @@ def sol_BEuler(L,N,alpha,bA,bB,Nt,ht,tol,compara=False,ax=None):
             break
 
     if not compara:
-        grafResultados(fig, ax1, ax2, 'BackwardEuler',x,u,e,n,ht,suma_tiempos,error)
+        plot_results(fig, ax1, ax2, 'BackwardEuler',x,u,e,n,ht,suma_tiempos,error)
     else:
         return x,u,e,n,ht,suma_tiempos,error
     
-def comparaEuler(L,N,alpha,bA,bB,Nt,ht,tol):
+def FE_vs_BE(L,N,alpha,bA,bB,Nt,ht,tol):
     tolerancia = tol
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8,4))
     fig.suptitle('Compación de los métodos de Euler', fontsize=12)
 
-    x,u,e,n,ht,suma_tiempos,error = sol_FEuler(L,N,alpha,bA,bB,Nt,ht,tolerancia,True,ax1)
-    grafMetodo(ax1,'Forward',x,u,e,n,ht,suma_tiempos,error)
+    x,u,e,n,ht,suma_tiempos,error = FEuler(L,N,alpha,bA,bB,Nt,ht,tolerancia,True,ax1)
+    plot_method(ax1,'Forward',x,u,e,n,ht,suma_tiempos,error)
     
-    x,u,e,n,ht,suma_tiempos,error = sol_BEuler(L,N,alpha,bA,bB,Nt,ht,tolerancia,True,ax2)
-    grafMetodo(ax2,'Backward',x,u,e,n,ht,suma_tiempos,error)
+    x,u,e,n,ht,suma_tiempos,error = BEuler(L,N,alpha,bA,bB,Nt,ht,tolerancia,True,ax2)
+    plot_method(ax2,'Backward',x,u,e,n,ht,suma_tiempos,error)
 
     plt.tight_layout()
     plt.savefig('Comparacion.pdf')
@@ -228,7 +228,7 @@ if __name__ == "__main__":
 
     tolerancia = 1e-6 # Criterio de término anticipado
 
-    sol_FEuler(L,N,alpha,bA,bB,Nt,ht,tolerancia)
-    sol_BEuler(L,N,alpha,bA,bB,Nt,ht,tolerancia)
+    FEuler(L,N,alpha,bA,bB,Nt,ht,tolerancia)
+    BEuler(L,N,alpha,bA,bB,Nt,ht,tolerancia)
 
     comparaEuler(L,N,alpha,bA,bB,Nt,ht,tolerancia)
