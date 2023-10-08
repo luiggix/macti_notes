@@ -253,9 +253,10 @@ class Plotter():
             if len(yticks) != 0:
                 ax.set_yticks(yticks)
             
-    def set_coordsys(self, n, 
+    def set_coordsys(self, n = 1, 
                      xlabel='$x$', ylabel='$y$',
                      xlabelsize=8, ylabelsize=8,
+#                     xtuple = None, ytuple = None,
                      trig = False):
         ax = self.__ax[n-1]
         # Move the left and bottom spines to x = 0 and y = 0, respectively.
@@ -275,9 +276,14 @@ class Plotter():
         ax.set_ylabel(ylabel, loc = 'top', rotation=0, labelpad=-45.0)
         ax.xaxis.set_tick_params(labelsize=xlabelsize)
         ax.yaxis.set_tick_params(labelsize=ylabelsize)
-        xticks = ax.get_xticks()
-        yticks = ax.get_yticks()
-        self.set_ticks(ax, xticks, yticks, trig)
+        
+#        if isinstance(xtuple, tuple) and isinstance(ytuple, tuple):
+#            xticks = np.linspace(xtuple[0],xtuple[1],xtuple[2]) 
+#            yticks = np.linspace(ytuple[0],ytuple[1],ytuple[2]) 
+#        else:
+#            xticks = ax.get_xticks()
+#            yticks = ax.get_yticks()
+#        self.set_ticks(ax, xticks, yticks, trig)
         
     
 #
@@ -960,10 +966,12 @@ class Plotter():
         
             
     def plot_vectors_sum(self, n, vecs, lvecs = None, baseline = [], w = 0.01, aspect='equal', limit=True, ofx=0.0):
-        suma = np.array([0, 0])
+        suma = np.array([0.0, 0.0])
         lsuma = ''
         for vi, li in zip(vecs, lvecs):
-            suma += vi
+#            suma += vi
+            suma = np.add(suma, vi, out=suma, casting="unsafe")
+#            print('vi = {} \t suma = {}'.format(vi, suma))
             lsuma += li if li[0] == '-' else '+'+li
 
         lsuma = lsuma[1:] if lsuma[0] == '+' else lsuma
@@ -973,21 +981,6 @@ class Plotter():
         if len(vecs) == 3:
             self.__ax[n-1].plot([vecs[0][0], suma[0]], [vecs[0][1], suma[1]], lw=0.75, ls='--', c='dimgrey')
             self.__ax[n-1].plot([vecs[1][0], suma[0]], [vecs[1][1], suma[1]], lw=0.75, ls='--', c='dimgrey')
-
-    def plot_vectors_subs(self, n, vecs, lvecs = None, baseline = [], w = 0.01, aspect='equal', limit=True):
-        resta = np.array([0, 0])
-        for vi in vecs:
-            resta -= vi
-        vecs.append(resta)
-        
-        v2 = vecs[1]
-        vecs.append(v3)
-        vecs.append(-v2)
-        lvecs.append(lvecs[0] + '-' + lvecs[1])
-        lvecs.append('-' + lvecs[1])
-        self.plot_vectors(n, vecs, lvecs, baseline, w, aspect, limit)
-        self.__ax[n-1].plot([vecs[0][0], v3[0]], [vecs[0][1], v3[1]], lw=0.75, ls='--', c='C3')#'dimgrey')
-        self.__ax[n-1].plot([-v2[0], v3[0]], [-v2[1], v3[1]], lw=0.75, ls='--', c='C0')#'dimgrey')
 
 if __name__ == '__main__':
 
